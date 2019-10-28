@@ -1,0 +1,27 @@
+{
+  "name": "bolg",
+  "version": "1.0.0",
+  "description": "A tiny blog with zero standards.",
+  "main": "index.js",
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "js-beautify": "^1.10.2",
+    "markdown-it": "^10.0.0",
+    "markdown-it-highlight": "^0.2.0",
+    "markdown-it-meta": "^0.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "render": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkoeppen/bolg.git"
+  },
+  "author": "Peter Koeppen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pkoeppen/bolg/issues"
+  },
+  "homepage": "https://github.com/pkoeppen/bolg#readme"
+}
