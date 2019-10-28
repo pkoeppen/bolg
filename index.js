@@ -8,6 +8,8 @@ const md = require('markdown-it')({
   highlight
 });
 const meta = require('markdown-it-meta');
+
+// Use metadata plugin.
 md.use(meta);
 
 // Set config variables.
@@ -44,7 +46,7 @@ const template = `
         margin: 18px 0;
       }
       .index a {
-          display: block;
+        display: block;
       }
     </style>
   </html>
@@ -74,6 +76,7 @@ const template = `
     if (!slug || !slugRegex.test(slug)) {
         throw new Error(`Error parsing '${filename}': Missing or invalid slug string format.`);
     }
+
     // Since everything will live in the same root directory,
     // disallow anything named 'index.md'.
     if (slug === 'index') {
@@ -96,7 +99,7 @@ const template = `
         meta: Object.assign({ slug }, md.meta)
     });
 
-    // Render entry HTML and write to disk.
+    // Render and beautify entry HTML.
     const content = `
       <div style="height:20px;">
         <a href="index.html">&lt; back</a>
@@ -108,10 +111,12 @@ const template = `
       .replace('{{ title }}', title)
       .replace('{{ content }}', content);
     const entryBeautified = beautify(entryRendered);
+
+    // Write the file to disk.
     await fs.outputFile(`./dist/${slug}.html`, entryBeautified);
   }
 
-  // Render index HTML and write to disk.
+  // Render and beautify index HTML.
   const links = entries.map(entry => (
     `<a href="${entry.meta.slug}.html">${entry.meta.title}</a>`
   )).join('\n');
@@ -124,11 +129,14 @@ const template = `
     .replace('{{ title }}', siteTitle)
     .replace('{{ content }}', content);
   const indexBeautified = beautify(indexRendered);
+
+  // Write the file to disk.
   await fs.outputFile('./dist/index.html', indexBeautified);
 
   // Calculate time elapsed.
   const end = Date.now();
   const elapsed = ((end - start) / 1000).toFixed(2);
+
   console.log(`Rendered ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'} in ${elapsed}s.`);
 })()
 .catch(error => {
@@ -140,11 +148,13 @@ const template = `
  */
 function highlight(str, lang) {
   if (lang && hljs.getLanguage(lang)) {
+    let processed;
     try {
-        const highlighted = hljs.highlight(lang, str, true).value;
-      return `<pre class="hljs"><code>${highlighted}</code></pre>`;
-    } catch (error) {}
+      processed = hljs.highlight(lang, str, true).value;
+    } catch (error) {
+      // Fallback.
+      processed = md.utils.escapeHtml(str);
+    }
+    return `<pre class="hljs"><code>${processed}</code></pre>`;
   }
-  const html = md.utils.escapeHtml(str);
-  return `<pre class="hljs"><code>${html}</code></pre>`;
 }
