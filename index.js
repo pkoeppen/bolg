@@ -28,7 +28,7 @@ const template = `
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/a11y-dark.min.css">
     </head>
     <body>
-      {{ content }}
+      <div class="content">{{ content }}</div>
     </body>
     <style>
       html {
@@ -36,6 +36,7 @@ const template = `
         font-size: 13px;
         line-height: 1.8;
         background: #FBF0D9;
+        letter-spacing: -.5px;
       }
       body {
         width: 100%;
@@ -44,6 +45,9 @@ const template = `
       }
       p {
         margin: 18px 0;
+      }
+      .content {
+          margin: 0 6px;
       }
       .index a {
         display: block;
