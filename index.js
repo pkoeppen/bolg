@@ -35,7 +35,8 @@ const template = `
         font-family: 'Oxygen Mono', monospace;
         font-size: 13px;
         line-height: 1.8;
-        background: #FBF0D9;
+        color: #222222;
+        background: #f1f3f4;
         letter-spacing: -.5px;
       }
       body {
@@ -45,6 +46,9 @@ const template = `
       }
       p {
         margin: 18px 0;
+      }
+      img {
+        max-width: 100%;
       }
       .content {
           margin: 0 6px;
@@ -75,8 +79,12 @@ const template = `
   for (let i = 0; i < files.length; i++) {
     const filename = files[i];
 
+    // Render markdown content.
+    const raw = await fs.readFile(`./content/${filename}`);
+    const rendered = md.render(raw.toString());
+
     // Extract slug from filename.
-    const [slug] = filename.split('.');
+    const slug = md.meta.slug || filename.split('.')[0];
     if (!slug || !slugRegex.test(slug)) {
         throw new Error(`Error parsing '${filename}': Missing or invalid slug string format.`);
     }
@@ -87,10 +95,6 @@ const template = `
         throw new Error(`Error parsing '${filename}': Invalid slug name 'index'.`);
     }
 
-    // Render markdown content.
-    const raw = await fs.readFile(`./content/${filename}`);
-    const rendered = md.render(raw.toString());
-
     // Entry title is required.
     const title = md.meta.title;
     if (!title) {
@@ -100,13 +104,13 @@ const template = `
     // Add entry to entries array.
     entries.push({
         rendered,
-        meta: Object.assign({ slug }, md.meta)
+        meta: md.meta
     });
 
     // Render and beautify entry HTML.
     const content = `
       <div style="height:20px;">
-        <a href="index.html">&lt; back</a>
+        <a href="${config.indexDocument ? '/' : 'index.html'}">&lt; back</a>
       </div>
       <h1>${title}</h1>
       <div>${rendered}</div>
@@ -117,13 +121,15 @@ const template = `
     const entryBeautified = beautify(entryRendered);
 
     // Write the file to disk.
-    await fs.outputFile(`./dist/${slug}.html`, entryBeautified);
+    const outputPath = `./dist/${slug}${config.indexDocument ? '/index' : ''}.html`;
+    await fs.outputFile(outputPath, entryBeautified);
   }
 
   // Render and beautify index HTML.
-  const links = entries.map(entry => (
-    `<a href="${entry.meta.slug}.html">${entry.meta.title}</a>`
-  )).join('\n');
+  const links = entries.map(entry => {
+    const href = `${entry.meta.slug}${config.indexDocument ? '' : '.html'}`;
+    return `<a href="${href}">${entry.meta.title}</a>`;
+  }).join('\n');
   const content = `
     <div style="height:20px;"></div>
     <h1>${siteTitle}</h1>

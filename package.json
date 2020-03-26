@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "fs-extra": "^8.1.0",
+    "highlightjs": "^9.16.2",
     "js-beautify": "^1.10.2",
     "markdown-it": "^10.0.0",
     "markdown-it-highlight": "^0.2.0",

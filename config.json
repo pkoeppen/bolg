@@ -1,3 +1,4 @@
 {
-    "siteTitle": "bolg"
+    "siteTitle": "bolg",
+    "indexDocument": false
 }
