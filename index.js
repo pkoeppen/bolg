@@ -50,6 +50,9 @@ const template = `
       img {
         max-width: 100%;
       }
+      blockquote {
+        font-style: italic;
+      }
       .content {
           margin: 0 6px;
       }
@@ -69,7 +72,7 @@ const template = `
 
   // Read MD files in 'content' directory.
   const dir = await fs.readdir('./content');
-  const files = dir.filter(filename => filename.endsWith('.md'));
+  const files = dir.filter(filename => filename.endsWith('.md') && filename !== 'example.md');
 
   // Clean 'dist' directory.
   await fs.remove('./dist');
@@ -116,7 +119,7 @@ const template = `
       <div>${rendered}</div>
     `;
     const entryRendered = template
-      .replace('{{ title }}', title)
+      .replace('{{ title }}', `${title} | ${siteTitle}`)
       .replace('{{ content }}', content);
     const entryBeautified = beautify(entryRendered);
 
