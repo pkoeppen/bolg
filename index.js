@@ -125,6 +125,49 @@ const template = `
     await fs.outputFile(outputPath, entryBeautified);
   }
 
+  if (config.sortByTimestamp) {
+    entries.sort((a, b) => {
+
+      const dateA = new Date(a.meta.timestamp);
+      const dateB = new Date(b.meta.timestamp);
+      const dateAValid = !isNaN(dateA);
+      const dateBValid = !isNaN(dateB);
+      const identical = dateA - dateB === 0;
+
+      // Order by timestamp where possible.
+      if (!identical) {
+        if (dateAValid && dateBValid) {
+          return dateA - dateB;
+          // If only one of the compared dates is invalid, order the valid date lower.
+        } else if (dateAValid) {
+          return -1;
+        } else if (dateBValid) {
+          return 1;
+        }
+      }
+
+      // Default to alphabetical order.
+      if (a.title < b.title) {
+        return -1;
+      } else if (a.title > b.title) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+  } else {
+    entries.sort((a, b) => {
+      if (a.title < b.title) {
+        return -1;
+      } else if (a.title > b.title) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
   // Render and beautify index HTML.
   const links = entries.map(entry => {
     const href = `${entry.meta.slug}${config.indexDocument ? '' : '.html'}`;

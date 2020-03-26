@@ -1,4 +1,5 @@
 {
     "siteTitle": "bolg",
-    "indexDocument": false
+    "indexDocument": false,
+    "sortByTimestamp": true
 }
